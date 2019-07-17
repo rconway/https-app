@@ -10,6 +10,15 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+  webappgo:
+    build:
+      context: .
+      dockerfile: webappgo/Dockerfile
+    image: rconway/webappgo
+    container_name: webappgo
+    restart: unless-stopped
+    networks:
+      - app-network
   webserver:
     image: nginx:mainline-alpine
     container_name: webserver
@@ -25,6 +34,7 @@ services:
       - dhparam:/etc/ssl/certs
     depends_on:
       - webappjs
+      - webappgo
     networks:
       - app-network
   certbot:
@@ -45,13 +55,13 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/rconway/https-node/webappjs/dist/views/
+      device: "${PWD}/www/"
       o: bind
   dhparam:
     driver: local
     driver_opts:
       type: none
-      device: /home/rconway/https-node/dhparam/
+      device: "${PWD}/dhparam/"
       o: bind
 
 networks:

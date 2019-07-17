@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>Golang App</title>
+    </head>
+    <body>
+        <hr>
+        <div>Login to the WebAppGo...</div>
+        <div>
+            <button onclick="hello('google').login()">Google Login</button>
+            <button onclick="hello('google').logout()">Google Logout</button>
+        </div>
+        <hr>
+        <div id="profile"></div>
+        <hr>
+
+        <script src="hello.all.js"></script>
+        <script>
+            hello.on('auth.login', function(auth) {
+                // Call user information, for the given network
+                hello(auth.network).api('me').then(function(r) {
+                    // Inject it into the container
+                    var label = document.getElementById('profile_' + auth.network);
+                    if (!label) {
+                        label = document.createElement('div');
+                        label.id = 'profile_' + auth.network;
+                        document.getElementById('profile').appendChild(label);
+                    }
+                    label.innerHTML = '<img src="' + r.thumbnail + '" /> Hey ' + r.name;
+                });
+            });
+            hello.on('auth.logout', function(auth) {
+                var label = document.getElementById('profile_' + auth.network);
+                if (label) {
+                    label.remove()
+                }
+            });
+
+            hello.init({
+                google: "192194868203-uq4ivfgq1p8ubdg4pdmn07gfoa2fel6v.apps.googleusercontent.com"
+            }, {redirect_uri: 'login.html'});
+        </script>
+    </body>
+</html>
