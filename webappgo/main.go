@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
+	"encoding/json"
 )
 
 func main() {
@@ -53,6 +55,25 @@ func main() {
 				<p><a href="data">DATA</a></p>
 			</body>
 		`))
+	})
+
+	mux.HandleFunc("/time", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("hit /time")
+
+		type TimeResult struct {
+			Time time.Time `json:"time"`
+		}
+		timeResult := TimeResult{
+			Time: time.Now(),
+		}
+		
+		var jsonData []byte
+		jsonData, err := json.Marshal(timeResult)
+		if err != nil {
+				log.Println(err)
+		}
+
+		w.Write(jsonData)
 	})
 
 	fmt.Println("LISTEN on port 8000...")

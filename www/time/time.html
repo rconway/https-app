@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>Current Time</title>
+  </head>
+  <body>
+    <div>
+      Time according to Javascript is <span id="jstime"></span><br>
+      Time according to Golang is <span id="gotime"></span>
+    </div>
+
+    <script>
+      function setTimeInElement(url, id) {
+        window.fetch(url)
+        .then(function(response) {
+          response.json()
+            .then(function(data) {
+              console.log(data);
+              document.getElementById(id).textContent = data.time;
+            })
+        })
+      }
+      setTimeInElement("../webappjs/time", "jstime");
+      setTimeInElement("../webappgo/time", "gotime");
+    </script>
+  </body>
+</html>
