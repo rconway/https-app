@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 	"encoding/json"
+	"github.com/hashicorp/go-uuid"
 )
 
 func main() {
@@ -69,6 +70,25 @@ func main() {
 		
 		var jsonData []byte
 		jsonData, err := json.Marshal(timeResult)
+		if err != nil {
+				log.Println(err)
+		}
+
+		w.Write(jsonData)
+	})
+
+	mux.HandleFunc("/uuid", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("hit /uuid")
+		
+		type UUIDResult struct {
+			UUID string `json:"uuid"`
+		}
+
+		uuidResult := UUIDResult{}
+		uuidResult.UUID, _ = uuid.GenerateUUID()
+		
+		var jsonData []byte
+		jsonData, err := json.Marshal(uuidResult)
 		if err != nil {
 				log.Println(err)
 		}

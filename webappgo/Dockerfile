@@ -1,11 +1,11 @@
-FROM golang:latest
+FROM golang:1.12-alpine as builder
+RUN apk add --no-cache git
+WORKDIR /app
+COPY . .
+RUN go build -v
 
-WORKDIR /go/src/github.com/rconway/webappgo
-COPY ./webappgo/. .
-
-RUN go get -d -v ./...
-RUN go install -v ./...
-
+FROM alpine:latest 
 EXPOSE 8000/tcp
-
-CMD ["webappgo"]
+COPY --from=builder /app/webappgo /webappgo
+ENTRYPOINT ["/webappgo"]
+CMD []

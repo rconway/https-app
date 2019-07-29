@@ -12,8 +12,8 @@ services:
       - app-network
   webappgo:
     build:
-      context: .
-      dockerfile: webappgo/Dockerfile
+      context: ./webappgo
+      dockerfile: Dockerfile
     image: rconway/webappgo
     container_name: webappgo
     restart: unless-stopped
