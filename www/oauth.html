@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <title>OAuth Test</title>
+    </head>
+    <body>
+        <div>
+            Accessing Data in an OAuth Server, based upon these instructions...<br>
+            <a href="https://www.oauth.com/oauth2-servers/accessing-data/">https://www.oauth.com/oauth2-servers/accessing-data/</a><br>
+            See Javascript Console for debug output
+        </div>
+        <hr>
+        <div>
+            <h3>GitHub Auth</h3>
+            <label for="client-id">Client Id</label>
+            <input id="client-id" type="text"><br>
+            <label for="redirect-uri">Redirect URI</label>
+            <input id="redirect-uri" type="text"><br>
+            <input type="button" value="Start OAuth Flow" onclick="startAuthCodeFlow()" >
+        </div>
+        <hr>
+
+        <script>
+console.log("oauth test...")
+
+const STORE_PREFIX = "rac-oauth"
+const STORE_CLIENT_ID = STORE_PREFIX + "-client-id"
+const STORE_REDIRECT_URI = STORE_PREFIX + "-redirect-uri"
+const STORE_FLOW_STATE = STORE_PREFIX + "-flow-state"
+
+// Generate random state value for oauth flow
+function randomState() {
+    const validChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let array = new Uint8Array(40);
+    window.crypto.getRandomValues(array);
+    array = array.map(x => validChars.charCodeAt(x % validChars.length));
+    return String.fromCharCode.apply(null, array);
+}
+
+// initiate oauth flow
+function startAuthCodeFlow() {
+    console.log("startAuthCodeFlow...")
+
+    // Get user supplied Client Id and persist in local storage
+    var clientId = document.getElementById("client-id").value
+    localStorage.setItem(STORE_CLIENT_ID, clientId)
+
+    // Get user supplied Redirect URL and persist in local storage
+    var redirectUri = document.getElementById("redirect-uri").value
+    localStorage.setItem(STORE_REDIRECT_URI, redirectUri)
+
+    // Generate a random state value for the flow
+    sessionStorage.setItem(STORE_FLOW_STATE, randomState())
+
+    // Construct the query string for the authorize request
+    var queryString = new URLSearchParams()
+    queryString.append("response_type", "code")
+    queryString.append("client_id", clientId)
+    queryString.append("redirect_uri", redirectUri)
+    queryString.append("scope", "user public_repo")
+    queryString.append("state", sessionStorage.getItem(STORE_FLOW_STATE))
+
+    // Initiate the authorize request
+    window.location.href = "https://github.com/login/oauth/authorize?" + queryString.toString()
+}
+
+// Populate Client Id input box from previously used value
+document.getElementById("client-id").value = localStorage.getItem(STORE_CLIENT_ID)
+
+// Populate Redirect URI input box from previously used value
+document.getElementById("redirect-uri").value = localStorage.getItem(STORE_REDIRECT_URI)
+
+// Route behaviour based upon URL query params
+var urlsp = new URLSearchParams(window.location.search)
+
+// oauth code
+if ( urlsp.has("code") && urlsp.has("state") ) {
+    console.log("do code...")
+    var expectedState = sessionStorage.getItem(STORE_FLOW_STATE)
+    var receivedState = urlsp.get("state")
+    console.log(`expected state: ${expectedState}`)
+    console.log(`received state: ${receivedState}`)
+    if ( expectedState === receivedState ) {
+        console.log("states MATCH")
+    }
+    else {
+        console.log("states MIS-MATCH")
+    }
+}
+// anything else...
+else {
+    console.log(`querystring = ${urlsp}`)
+}
+
+        </script>
+    </body>
+</html>
