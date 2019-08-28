@@ -1,0 +1,9 @@
+
+#client-id, #redirect-uri {
+  width: 300px;
+}
+
+.rac-oauth-label {
+  display: inline-block;
+  width: 100px;
+}

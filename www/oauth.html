@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>OAuth Test</title>
+        <link rel="stylesheet" href="oauth.css">
     </head>
     <body>
         <div>
@@ -11,9 +12,9 @@
         <hr>
         <div>
             <h3>GitHub Auth</h3>
-            <label for="client-id">Client Id</label>
+            <label for="client-id" class="rac-oauth-label">Client Id</label>
             <input id="client-id" type="text"><br>
-            <label for="redirect-uri">Redirect URI</label>
+            <label for="redirect-uri" class="rac-oauth-label">Redirect URI</label>
             <input id="redirect-uri" type="text"><br>
             <input type="button" value="Start OAuth Flow" onclick="startAuthCodeFlow()" >
         </div>
