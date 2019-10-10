@@ -1,12 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
-	"encoding/json"
-	"github.com/hashicorp/go-uuid"
+
+	uuid "github.com/hashicorp/go-uuid"
+
+	"github.com/rconway/webappgo/routes"
 )
 
 func main() {
@@ -67,11 +70,11 @@ func main() {
 		timeResult := TimeResult{
 			Time: time.Now(),
 		}
-		
+
 		var jsonData []byte
 		jsonData, err := json.Marshal(timeResult)
 		if err != nil {
-				log.Println(err)
+			log.Println(err)
 		}
 
 		w.Write(jsonData)
@@ -79,22 +82,26 @@ func main() {
 
 	mux.HandleFunc("/uuid", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("hit /uuid")
-		
+
 		type UUIDResult struct {
 			UUID string `json:"uuid"`
 		}
 
 		uuidResult := UUIDResult{}
 		uuidResult.UUID, _ = uuid.GenerateUUID()
-		
+
 		var jsonData []byte
 		jsonData, err := json.Marshal(uuidResult)
 		if err != nil {
-				log.Println(err)
+			log.Println(err)
 		}
 
 		w.Write(jsonData)
 	})
+
+	// MESSING with subroutes
+	mux.Handle("/fredbob/", http.StripPrefix("/fredbob", routes.NewFredbobHandler()))
+	// MESSING with subroutes
 
 	fmt.Println("LISTEN on port 8000...")
 	log.Fatal(http.ListenAndServe(":8000", mux))
