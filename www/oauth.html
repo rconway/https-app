@@ -21,7 +21,7 @@
         <hr>
 
         <script>
-console.log("oauth test...")
+console.log(`oauth test @ ${new Date()}...`)
 
 const STORE_PREFIX = "rac-oauth"
 const STORE_CLIENT_ID = STORE_PREFIX + "-client-id"
@@ -64,6 +64,48 @@ function startAuthCodeFlow() {
     window.location.href = "https://github.com/login/oauth/authorize?" + queryString.toString()
 }
 
+// initiate oauth flow
+function requestAccessToken(code) {
+    console.log("requestAccessToken...")
+
+    // Accept: "application/vnd.github.v3+json, application/json",
+    //         "User-Agent": "https://app.rconway.co.uk/",
+
+    // Construct the query string for the token request
+    var queryString = new URLSearchParams()
+    queryString.append("grant_type", "authorization_code")
+    queryString.append("code", code)
+    queryString.append("redirect_uri", localStorage.getItem(STORE_REDIRECT_URI))
+    queryString.append("client_id", localStorage.getItem(STORE_CLIENT_ID))
+    queryString.append("client_secret", "<<secret>>")
+
+    tokenRequestUrl = "https://github.com/login/oauth/access_token?" + queryString.toString()
+
+    // Initiate the token request
+    // window.location.href = tokenRequestUrl
+
+    fetch(tokenRequestUrl, {
+        method: "GET",
+        mode: "cors",
+        headers: {
+            accept: "application/json",
+            "user-agent": "https://app.rconway.co.uk/"
+        }
+    })
+    .then(function(response) {
+        console.log(response)
+        if (response.ok) {
+            response.json()
+            .then(data => { console.log(data) })
+            .catch(error => console.error(error))
+        }
+        else {
+            console.error("bad response from 'access_token' endpoint")
+        }
+    })
+    .catch(error => console.error(error))
+}
+
 // Populate Client Id input box from previously used value
 document.getElementById("client-id").value = localStorage.getItem(STORE_CLIENT_ID)
 
@@ -82,6 +124,7 @@ if ( urlsp.has("code") && urlsp.has("state") ) {
     console.log(`received state: ${receivedState}`)
     if ( expectedState === receivedState ) {
         console.log("states MATCH")
+        requestAccessToken(urlsp.get("code"))
     }
     else {
         console.log("states MIS-MATCH")
