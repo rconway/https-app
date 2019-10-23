@@ -99,9 +99,8 @@ func main() {
 		w.Write(jsonData)
 	})
 
-	// MESSING with subroutes
-	mux.Handle("/fredbob/", http.StripPrefix("/fredbob", routes.NewFredbobHandler()))
-	// MESSING with subroutes
+	// GitHub experiments
+	mux.Handle("/github/", http.StripPrefix("/github", routes.NewGithubHandler()))
 
 	fmt.Println("LISTEN on port 8000...")
 	log.Fatal(http.ListenAndServe(":8000", mux))

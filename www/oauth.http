@@ -1,0 +1,16 @@
+
+GET https://github.com/login/oauth/authorize
+
+###
+
+GET https://github.com/login/oauth/access_token
+?grant_type=authorization_code
+&code=3938c3c6bd49bb96a640
+&redirect_uri=https://app.rconway.co.uk/oauth.html
+&client_id=6e33c9212621230df631
+&client_secret=e280813c8d831c9b9e0218f9bd750558a25a4bed
+# accept: application/json
+
+###
+
+https://github.com/login/oauth/access_token?client_id=6e33c9212621230df631&client_secret=e280813c8d831c9b9e0218f9bd750558a25a4bed&code=dfb4425ed780428ed09d&grant_type=authorization_code&redirect_uri=https%3A%2F%2Fapp.rconway.co.uk%2Foauth.html
